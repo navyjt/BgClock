@@ -159,7 +159,7 @@ public class BgClock extends JFrame {
 					btnStop.setEnabled(true);
 					
 					String inputValue = JOptionPane.showInputDialog("请输入倒计时的秒数"); 
-					time = (Float.parseFloat(inputValue))*100;
+					time = (Float.parseFloat(inputValue))*10;
 					Run= true;
 					digitclock.setForeground(new Color(0, 64, 128));
 				}
@@ -185,7 +185,7 @@ public class BgClock extends JFrame {
 					btnReset.setEnabled(false);
 					btnStop.setEnabled(true);
 					//digitclock.setText("00:00:00.0");
-					System.out.println(digiclockisStoped+" digitclock.setText开始计时");	
+					//System.out.println(digiclockisStoped+" digitclock.setText开始计时");	
 					//数字时钟部分
 					/*		       DigitTimeRun t=new DigitTimeRun();
 		        t.run(); */
@@ -569,7 +569,7 @@ public class BgClock extends JFrame {
 							arcSec -= 360.0 / 60 / 10; // 每秒转6度
 							arcMin -= 360.0 / 60 / 60 / 10; // 每60秒转6度
 							arcHour -= 360.0 / 12 / 60 / 60 / 10; // 每3600秒转30度
-							System.out.println("当前时间的角度为"+String.valueOf(arcSec));
+							//System.out.println("当前时间的角度为"+String.valueOf(arcSec));
 							// 当角度满一圈时，归0
 							if (arcSec <= -360) {
 								arcSec = 0;
@@ -626,7 +626,6 @@ public class BgClock extends JFrame {
 	    
 
 	     private String time2str(float t) {
-	    	 t/= 10;
 	        int h = (int)t/36000;
 	        int m = ((int)t-h*36000)/600;
 	        double s = (t%600)/10.00;
@@ -665,7 +664,7 @@ public class BgClock extends JFrame {
 	            	else{
 	            		
 	            		try {
-	            			Thread.sleep(10);
+	            			Thread.sleep(100);
 	            		} catch (InterruptedException e1) {
 	            		}
 	            		if (digiclockisReversed) {
@@ -687,12 +686,12 @@ public class BgClock extends JFrame {
 	            		}
 	            		
 	            		digitclock.setText(time2str(time));
-	            		System.out.println(time);
+	            		//System.out.println(time);
 	            	}
 
 	            }
 	           
-	            System.out.println("线程继续运行中");
+	            System.out.println("");
 	        }
 	        
 	    }
