@@ -1,10 +1,8 @@
 package clock;
 
 import java.awt.BasicStroke;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -17,7 +15,6 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.net.URL;
-import java.security.DigestOutputStream;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,8 +24,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 /**
  * 一个精美的时钟 （自动换背景 秒针平滑移动）
@@ -322,7 +317,7 @@ public class BgClock extends JFrame {
 		private final int HEIGHT = 440;
 
 		// 圆形时钟的X半径和Y半径
-		private final int CIRCLE_X_RADIUS = 150;
+		private final int CIRCLE_X_RADIUS = 155;
 		private final int CIRCLE_Y_RADIUS = 155;
 
 		// 圆形时钟的原点
