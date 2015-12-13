@@ -1,8 +1,10 @@
 package clock;
 
 import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -15,6 +17,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.security.DigestOutputStream;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -23,6 +26,9 @@ import java.util.GregorianCalendar;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 /**
  * 一个精美的时钟 （自动换背景 秒针平滑移动）
@@ -42,7 +48,13 @@ public class BgClock extends JFrame {
 	private JLabel remarkLabel = new JLabel();
 	// 时间标签，指示时间
 	private JLabel timeLabel = new JLabel();
-
+	//数字时钟
+	private Digitclock digitclock = new Digitclock();
+	//数字时钟初始时间
+	
+	private Boolean analogiscontroled = false;
+	
+	
 	private JButton btnStart = new JButton();
 	private JButton btnStop = new JButton();
 	private JButton btnReset = new JButton();
@@ -50,11 +62,27 @@ public class BgClock extends JFrame {
 	boolean clockisReseted = false;
 	boolean clockisStoped = false;
 	boolean clockisReversed = false;
+	boolean digiclockisReseted = true;
+	boolean digiclockisStoped = false;
+	boolean digiclockisReversed = false;
+	boolean digiclockisStarted = true;
+	   
+	boolean Run = true;
+	 private float time=0;
+	
+	
+/*	//小工具，提供给数字时钟的时间转换为字符串显示用
+    private String time2str(float t) {
+        int h = (int)t/36000;
+        int m = ((int)t-h*36000)/600;
+        double s = (t%600)/10.00;
+        return String.format("%02d : %02d : %04.1f", h,m,s);
+    }*/
 	
 	public BgClock() {
 
 		setTitle("时钟");
-		setSize(500, 520);
+		setSize(500, 530);
 		setLocation(((int) Toolkit.getDefaultToolkit().getScreenSize()
 				.getWidth() - 500) / 2, ((int) Toolkit.getDefaultToolkit()
 				.getScreenSize().getHeight() - 480) / 2);
@@ -66,8 +94,23 @@ public class BgClock extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				
-				clockisReseted = true;
-				clockisReversed = false;
+				if (analogiscontroled) {
+					clockisReseted = true;
+					clockisReversed = false;
+				}
+				else{
+					digiclockisReseted = true;
+					digiclockisReversed = false;
+					btnReverse.setEnabled(true);;
+					btnStart.setEnabled(true);
+					btnReset.setEnabled(true);
+					btnStop.setEnabled(false);
+					
+					digitclock.setText("00:00.00");
+					digitclock.setForeground(new Color(0, 64, 128));
+					Run= false;
+					time = 0;
+				}
 								
 			}
 		});
@@ -76,9 +119,23 @@ public class BgClock extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				
+				if (analogiscontroled) {
 				clockisStoped = true;
 				clockisReversed = false;
+				}
+				else {
+					Run = false;
+					digiclockisStoped = true;
+					digiclockisReversed = false;
+					btnReverse.setEnabled(true);;
+					btnStart.setEnabled(true);
+					btnReset.setEnabled(true);
+					btnStop.setEnabled(false);
+					digitclock.setForeground(new Color(0, 64, 128));
+					//digitclock.setText("00:00.0");
+					//time = 0;
+					
+				}
 			}
 		});
 		
@@ -86,10 +143,26 @@ public class BgClock extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				
+				if (analogiscontroled) {
 				clockisReversed = true;
 				clockisReseted = false;
 				clockisStoped = false;
+				}
+				else {
+					Run=false;
+					digiclockisReversed = true;
+					digiclockisReseted = false;
+					digiclockisStoped = false;
+					btnReverse.setEnabled(false);;
+					btnStart.setEnabled(false);
+					btnReset.setEnabled(false);
+					btnStop.setEnabled(true);
+					
+					String inputValue = JOptionPane.showInputDialog("请输入倒计时的秒数"); 
+					time = (Float.parseFloat(inputValue))*100;
+					Run= true;
+					digitclock.setForeground(new Color(0, 64, 128));
+				}
 			}
 		});
 		
@@ -98,8 +171,29 @@ public class BgClock extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
+				if (analogiscontroled) {
 				clockisReseted = false;
 				clockisStoped = false;
+				}
+ 
+		        else{
+					digiclockisReseted = false;
+					digiclockisStoped = false;
+					digiclockisStarted = true;
+					btnReverse.setEnabled(false);;
+					btnStart.setEnabled(false);
+					btnReset.setEnabled(false);
+					btnStop.setEnabled(true);
+					//digitclock.setText("00:00:00.0");
+					System.out.println(digiclockisStoped+" digitclock.setText开始计时");	
+					//数字时钟部分
+					/*		       DigitTimeRun t=new DigitTimeRun();
+		        t.run(); */
+					Run = true;
+					digitclock.setForeground(new Color(0, 64, 128));
+					
+		        }
+
 			}
 		});
 	}
@@ -154,23 +248,34 @@ public class BgClock extends JFrame {
 
 		// 初始化时间标签
 		timeLabel.setSize(500, 30);
-		timeLabel.setLocation(100, 400);
+		timeLabel.setLocation(100, 10);
 		timeLabel.setForeground(new Color(0, 64, 128));
 		timeLabel.setFont(new Font("Fixedsys", Font.PLAIN, 15));
 		
+		//初始化数字时钟标签
+		digitclock.setSize(300,50);
+		digitclock.setLocation(165,370);
+		digitclock.setForeground(new Color(0, 64, 128));
+		digitclock.setFont(new Font("DS-Digital", Font.PLAIN, 50));
+		digitclock.setText("");
 		
+		
+		//正着走按钮
 		btnStart.setSize(80,30);
 		btnStart.setLocation(50,450);
 		btnStart.setText("正着走");
 
+		//倒着走按钮
 		btnReverse.setSize(80,30);
 		btnReverse.setLocation(150,450);
 		btnReverse.setText("倒着走");
 		
+		//暂停按钮
 		btnStop.setSize(80,30);
 		btnStop.setLocation(250,450);
-		btnStop.setText("暂停");
+		btnStop.setText("停止");
 		
+		//重置按钮
 		btnReset.setSize(80,30);
 		btnReset.setLocation(350,450);
 		btnReset.setText("复位");
@@ -188,12 +293,14 @@ public class BgClock extends JFrame {
 		con.add(btnStart);
 		con.add(btnStop);
 		con.add(btnReverse);
+		con.add(digitclock);
 	}
 
 	public static void main(String[] args) {
 		BgClock clock = new BgClock();
 		clock.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		clock.setVisible(true);
+		
 		
 		
 	}
@@ -253,6 +360,7 @@ public class BgClock extends JFrame {
 
 
 		public ClockLabel() {
+			System.out.println("初始化模拟时钟");
 
 			// 设置时钟标签的大小
 			this.setSize(WIDTH, HEIGHT);
@@ -509,5 +617,85 @@ public class BgClock extends JFrame {
 				e.printStackTrace();
 			}
 		}
+	}
+
+
+	class Digitclock extends JLabel implements Runnable{
+		// 时钟线程
+		Thread DigitThread = null;
+	    
+
+	     private String time2str(float t) {
+	    	 t/= 10;
+	        int h = (int)t/36000;
+	        int m = ((int)t-h*36000)/600;
+	        double s = (t%600)/10.00;
+	        return String.format("%02d:%05.2f", m,s);
+	    }
+	     
+	    public Digitclock(){
+	    	System.out.println("开始初始化数字时钟");
+	       
+	        
+	        //digitclock.setText("我要开始计时了");
+	       
+	        /*start.addActionListener(this);
+	        stop.addActionListener(this);
+	        clear.addActionListener(this);*/
+			//如果时钟被复位，则三针归零
+
+	        DigitThread = new Thread(this);
+	        DigitThread.start();
+	    }
+	     public void run() {
+	      //  jtf.setText(time2str(time));
+	       // while (!this.isAlive() && !this.isInterrupted()) 
+	/*    	 if(digiclockisStarted)
+	    		 time = 0;*/
+	        while(true){
+	        	
+
+	            if (Run) {
+	            	System.out.println("开始run函数");
+	            	if (digiclockisReseted) {
+		                digitclock.setText("00:00.00");
+		                Run = false;
+		               
+					}
+	            	else{
+	            		
+	            		try {
+	            			Thread.sleep(10);
+	            		} catch (InterruptedException e1) {
+	            		}
+	            		if (digiclockisReversed) {
+							time -=1;
+							
+							if(time<0){
+								time = 0;
+								digitclock.setForeground(new Color(255, 0, 0));
+								Run = false;
+								btnStop.setEnabled(false);
+								btnStart.setEnabled(false);
+								btnReverse.setEnabled(true);
+								btnReset.setEnabled(true);
+							}
+						}
+	            		else{
+	            			time += 1;
+	            			
+	            		}
+	            		
+	            		digitclock.setText(time2str(time));
+	            		System.out.println(time);
+	            	}
+
+	            }
+	           
+	            System.out.println("线程继续运行中");
+	        }
+	        
+	    }
+
 	}
 }
