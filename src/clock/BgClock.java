@@ -149,19 +149,29 @@ public class BgClock extends JFrame {
 				clockisStoped = false;
 				}
 				else {
-					Run=false;
-					digiclockisReversed = true;
-					digiclockisReseted = false;
-					digiclockisStoped = false;
-					btnReverse.setEnabled(false);;
-					btnStart.setEnabled(false);
-					btnReset.setEnabled(false);
-					btnStop.setEnabled(true);
+					
+					digitclock.setText("00:00.00");
+					digitclock.setForeground(new Color(0, 64, 128));
+					time = 0;
 					
 					String inputValue = JOptionPane.showInputDialog("请输入倒计时的秒数"); 
-					time = (Float.parseFloat(inputValue))*10;
-					Run= true;
-					digitclock.setForeground(new Color(0, 64, 128));
+					if ((inputValue != null)&&(!inputValue.equals(""))) {
+						Run=false;
+						digiclockisReversed = true;
+						digiclockisReseted = false;
+						digiclockisStoped = false;
+						btnReverse.setEnabled(false);;
+						btnStart.setEnabled(false);
+						btnReset.setEnabled(false);
+						btnStop.setEnabled(true);
+						time = (Float.parseFloat(inputValue))*10;
+						Run= true;
+						digitclock.setForeground(new Color(0, 64, 128));
+						
+					}
+					else{
+						
+					}
 				}
 			}
 		});
@@ -629,33 +639,29 @@ public class BgClock extends JFrame {
 	        int h = (int)t/36000;
 	        int m = ((int)t-h*36000)/600;
 	        double s = (t%600)/10.00;
-	        return String.format("%02d:%05.2f", m,s);
+	        //加入10ms级别的数字，因为系统显示消耗太多资源，改为随机显示
+	        int l = (int)(Math.random()*10);
+	        //return String.format("%02d:%05.2f", m,s);
+	        if(t == 0)
+	        {
+	        	
+	        	l = 0;
+	        }
+	        return String.format("%02d:%04.1f%1d", m,s,l);
+
 	    }
 	     
 	    public Digitclock(){
-	    	System.out.println("开始初始化数字时钟");
-	       
-	        
-	        //digitclock.setText("我要开始计时了");
-	       
-	        /*start.addActionListener(this);
-	        stop.addActionListener(this);
-	        clear.addActionListener(this);*/
-			//如果时钟被复位，则三针归零
 
 	        DigitThread = new Thread(this);
 	        DigitThread.start();
 	    }
 	     public void run() {
-	      //  jtf.setText(time2str(time));
-	       // while (!this.isAlive() && !this.isInterrupted()) 
-	/*    	 if(digiclockisStarted)
-	    		 time = 0;*/
-	        while(true){
-	        	
+
+	        while(DigitThread.isAlive()&&(!DigitThread.isInterrupted())){
+	    	
 
 	            if (Run) {
-	            	System.out.println("开始run函数");
 	            	if (digiclockisReseted) {
 		                digitclock.setText("00:00.00");
 		                Run = false;
@@ -670,7 +676,7 @@ public class BgClock extends JFrame {
 	            		if (digiclockisReversed) {
 							time -=1;
 							
-							if(time<0){
+							if(time < 0){
 								time = 0;
 								digitclock.setForeground(new Color(255, 0, 0));
 								Run = false;
@@ -686,12 +692,12 @@ public class BgClock extends JFrame {
 	            		}
 	            		
 	            		digitclock.setText(time2str(time));
-	            		//System.out.println(time);
+
 	            	}
 
 	            }
 	           
-	            System.out.println("");
+	         //   System.out.println("");
 	        }
 	        
 	    }
