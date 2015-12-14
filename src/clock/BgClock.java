@@ -7,23 +7,23 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.MediaTracker;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
-import java.net.URL;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+
 
 /**
  * 一个精美的时钟 （自动换背景 秒针平滑移动）
@@ -51,7 +51,6 @@ public class BgClock extends JFrame {
 	
 	private Boolean analogiscontroled = true;
 	private Boolean digitaliscontroled = true;
-	
 	
 	private JButton btnStart = new JButton();
 	private JButton btnStop = new JButton();
@@ -121,9 +120,6 @@ public class BgClock extends JFrame {
 					btnReset.setEnabled(true);
 					btnStop.setEnabled(false);
 					digitclock.setForeground(new Color(0, 64, 128));
-					//digitclock.setText("00:00.0");
-					//time = 0;
-					
 				}
 				
 			}
@@ -185,11 +181,6 @@ public class BgClock extends JFrame {
 					btnStart.setEnabled(false);
 					btnReset.setEnabled(false);
 					btnStop.setEnabled(true);
-					//digitclock.setText("00:00:00.0");
-					//System.out.println(digiclockisStoped+" digitclock.setText开始计时");	
-					//数字时钟部分
-					/*		       DigitTimeRun t=new DigitTimeRun();
-		        t.run(); */
 					Run = true;
 					digitclock.setForeground(new Color(0, 64, 128));
 					
@@ -332,12 +323,8 @@ public class BgClock extends JFrame {
 		// 当前秒针所处的角度
 		double arcSec = 0;
 
-		int imageID = 0;
-		// 背景图片对象数组
-		Image img[] = new Image[1];
-		// 背景图片URL，在该包的image目录下（命名：1.jpg...5.jpg）
-		URL url[] = new URL[] { ClockLabel.class.getResource("image/1.jpg"),};
-
+		// 背景图片
+		Image img1 = new ImageIcon("image\\9.jpg").getImage();
 		// 一个具有缓冲区的图像对象
 		BufferedImage bufferedImage = null;
 		int imageSize = 2 * Math.max(CIRCLE_X_RADIUS, CIRCLE_Y_RADIUS);
@@ -360,30 +347,6 @@ public class BgClock extends JFrame {
 				arcMin = now.get(Calendar.MINUTE) * (360.0 / 60)
 						+ now.get(Calendar.SECOND) * (360.0 / 60 / 60);
 				arcSec = now.get(Calendar.SECOND) * (360.0 / 60);
-			
-			
-			// 根据图片URL创建图片对象
-			Toolkit tk = this.getToolkit();
-			img[0] = tk.createImage(url[0]);
-			/*img[1] = tk.createImage(url[1]);
-			img[2] = tk.createImage(url[2]);
-			img[3] = tk.createImage(url[3]);
-			img[4] = tk.createImage(url[4]);
-			*/try {
-				// 使用MediaTracker加载图片对象
-				// MediaTracker 类是一个跟踪多种媒体对象状态的实用工具类,
-				// 媒体对象可以包括音频剪辑和图像，但目前仅支持图像.
-				MediaTracker mt = new MediaTracker(this);
-				mt.addImage(img[0], 0);
-				/*mt.addImage(img[1], 0);
-				mt.addImage(img[2], 0);
-				mt.addImage(img[3], 0);
-				mt.addImage(img[4], 0);
-				*/// 加载媒体跟踪器中所有的图像。
-				mt.waitForAll();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 
 			// 创建一个有缓冲的Image对象
 			bufferedImage = new BufferedImage(imageSize, imageSize,
@@ -391,12 +354,9 @@ public class BgClock extends JFrame {
 			// 为BufferedImage创建Graphics2D对象，
 			// 以后用该Graphics2D对象画的图都会画在BufferedImage中
 			bufferedImageGraphics = bufferedImage.createGraphics();
-
 			// 启动线程
 			clockThread = new Thread(this);
 			clockThread.start();
-			
-			
 		}
 
 		public void paint(Graphics g1) {
@@ -460,9 +420,8 @@ public class BgClock extends JFrame {
 			}
 				
 			//载入图片背景
-			bufferedImageGraphics.drawImage(img[imageID], 0, 0, imageSize,
+			bufferedImageGraphics.drawImage(img1, 0, 0, imageSize,
 					imageSize, 0, 0, imageSize + 10, imageSize + 10, this);
-		
 						
 			/** 以上画背景操作都是画在bufferedImage上的，这里要将bufferedImage画在ClockLabel **/
 			// 将当前用户剪贴区 Clip 与椭圆区域相交，并将 Clip 设置为所得的交集
@@ -633,8 +592,6 @@ public class BgClock extends JFrame {
 	            	}
 
 	            }
-	           
-	         //   System.out.println("");
 	        }
 	        
 	    }
