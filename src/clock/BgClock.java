@@ -45,9 +45,12 @@ public class BgClock extends JFrame {
 	private JLabel timeLabel = new JLabel();
 	//数字时钟
 	private Digitclock digitclock = new Digitclock();
-	//数字时钟初始时间
 	
-	private Boolean analogiscontroled = false;
+	
+	//两个布尔变量，用来控制下面的四个按钮是操作模拟时钟还是数字时钟
+	
+	private Boolean analogiscontroled = true;
+	private Boolean digitaliscontroled = true;
 	
 	
 	private JButton btnStart = new JButton();
@@ -61,18 +64,9 @@ public class BgClock extends JFrame {
 	boolean digiclockisStoped = false;
 	boolean digiclockisReversed = false;
 	boolean digiclockisStarted = true;
-	   
 	boolean Run = true;
-	 private float time=0;
+	private float time=0;
 	
-	
-/*	//小工具，提供给数字时钟的时间转换为字符串显示用
-    private String time2str(float t) {
-        int h = (int)t/36000;
-        int m = ((int)t-h*36000)/600;
-        double s = (t%600)/10.00;
-        return String.format("%02d : %02d : %04.1f", h,m,s);
-    }*/
 	
 	public BgClock() {
 
@@ -93,7 +87,7 @@ public class BgClock extends JFrame {
 					clockisReseted = true;
 					clockisReversed = false;
 				}
-				else{
+				if(digitaliscontroled){
 					digiclockisReseted = true;
 					digiclockisReversed = false;
 					btnReverse.setEnabled(true);;
@@ -118,7 +112,7 @@ public class BgClock extends JFrame {
 				clockisStoped = true;
 				clockisReversed = false;
 				}
-				else {
+				if(digitaliscontroled){
 					Run = false;
 					digiclockisStoped = true;
 					digiclockisReversed = false;
@@ -131,6 +125,7 @@ public class BgClock extends JFrame {
 					//time = 0;
 					
 				}
+				
 			}
 		});
 		
@@ -143,7 +138,7 @@ public class BgClock extends JFrame {
 				clockisReseted = false;
 				clockisStoped = false;
 				}
-				else {
+				if(digitaliscontroled){
 					
 					digitclock.setText("00:00.00");
 					digitclock.setForeground(new Color(0, 64, 128));
@@ -168,6 +163,7 @@ public class BgClock extends JFrame {
 						
 					}
 				}
+
 			}
 		});
 		
@@ -181,7 +177,7 @@ public class BgClock extends JFrame {
 				clockisStoped = false;
 				}
  
-		        else{
+		        if (digitaliscontroled){
 					digiclockisReseted = false;
 					digiclockisStoped = false;
 					digiclockisStarted = true;
@@ -198,6 +194,7 @@ public class BgClock extends JFrame {
 					digitclock.setForeground(new Color(0, 64, 128));
 					
 		        }
+	
 
 			}
 		});
@@ -262,7 +259,7 @@ public class BgClock extends JFrame {
 		digitclock.setLocation(165,370);
 		digitclock.setForeground(new Color(0, 64, 128));
 		digitclock.setFont(new Font("DS-Digital", Font.PLAIN, 50));
-		digitclock.setText("");
+		digitclock.setText("00:00.00");
 		
 		
 		//正着走按钮
@@ -289,10 +286,11 @@ public class BgClock extends JFrame {
 		Container con = getContentPane();
 		con.setBackground(Color.white);
 		con.setLayout(null);
-		con.add(weekLabel);
+		//con.add(weekLabel);
 		con.add(dateLabel);
 		con.add(remarkLabel);
 		con.add(timeLabel);
+		con.add(weekLabel);
 		con.add(clockLabel);
 		con.add(btnReset);
 		con.add(btnStart);
@@ -305,8 +303,6 @@ public class BgClock extends JFrame {
 		BgClock clock = new BgClock();
 		clock.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		clock.setVisible(true);
-		
-		
 		
 	}
 
@@ -336,22 +332,11 @@ public class BgClock extends JFrame {
 		// 当前秒针所处的角度
 		double arcSec = 0;
 
-		// 颜色的透明度，
-		int alpha = 100;
-		// 标识颜色透明度变化的方向，为true时表示越来越透明，为false时表示越来越不透明
-		boolean flag = false;
-		// 背景图片的id，轮换显示背景图片时使用
 		int imageID = 0;
 		// 背景图片对象数组
-		Image img[] = new Image[5];
+		Image img[] = new Image[1];
 		// 背景图片URL，在该包的image目录下（命名：1.jpg...5.jpg）
-		URL url[] = new URL[] { ClockLabel.class.getResource("image/1.jpg"),
-				ClockLabel.class.getResource("image/2.jpg"),
-				ClockLabel.class.getResource("image/3.jpg"),
-				ClockLabel.class.getResource("image/4.jpg"),
-				ClockLabel.class.getResource("image/5.jpg"),
-			 
-				};
+		URL url[] = new URL[] { ClockLabel.class.getResource("image/1.jpg"),};
 
 		// 一个具有缓冲区的图像对象
 		BufferedImage bufferedImage = null;
@@ -365,8 +350,6 @@ public class BgClock extends JFrame {
 
 
 		public ClockLabel() {
-			System.out.println("初始化模拟时钟");
-
 			// 设置时钟标签的大小
 			this.setSize(WIDTH, HEIGHT);
 
@@ -382,21 +365,21 @@ public class BgClock extends JFrame {
 			// 根据图片URL创建图片对象
 			Toolkit tk = this.getToolkit();
 			img[0] = tk.createImage(url[0]);
-			img[1] = tk.createImage(url[1]);
+			/*img[1] = tk.createImage(url[1]);
 			img[2] = tk.createImage(url[2]);
 			img[3] = tk.createImage(url[3]);
 			img[4] = tk.createImage(url[4]);
-			try {
+			*/try {
 				// 使用MediaTracker加载图片对象
 				// MediaTracker 类是一个跟踪多种媒体对象状态的实用工具类,
 				// 媒体对象可以包括音频剪辑和图像，但目前仅支持图像.
 				MediaTracker mt = new MediaTracker(this);
 				mt.addImage(img[0], 0);
-				mt.addImage(img[1], 0);
+				/*mt.addImage(img[1], 0);
 				mt.addImage(img[2], 0);
 				mt.addImage(img[3], 0);
 				mt.addImage(img[4], 0);
-				// 加载媒体跟踪器中所有的图像。
+				*/// 加载媒体跟踪器中所有的图像。
 				mt.waitForAll();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -475,7 +458,19 @@ public class BgClock extends JFrame {
 				arcMin = 0;
 				arcSec = 0;
 			}
-			//System.out.println(String.valueOf(arcHour));
+				
+			//载入图片背景
+			bufferedImageGraphics.drawImage(img[imageID], 0, 0, imageSize,
+					imageSize, 0, 0, imageSize + 10, imageSize + 10, this);
+		
+						
+			/** 以上画背景操作都是画在bufferedImage上的，这里要将bufferedImage画在ClockLabel **/
+			// 将当前用户剪贴区 Clip 与椭圆区域相交，并将 Clip 设置为所得的交集
+			g.clip(new Ellipse2D.Double(95, 45, imageSize, imageSize));
+			g.setColor(Color.white);
+			// 在用户剪贴区画bufferedImage
+			g.drawImage(bufferedImage, 95, 45, this);
+			
 			/** ****** 画时钟的指针 ******** */
 			// 画时针
 			Line2D.Double lh = new Line2D.Double(CIRCLE_X, CIRCLE_Y, CIRCLE_X
@@ -484,7 +479,7 @@ public class BgClock extends JFrame {
 							* HOUR_LENGTH);
 			// 设置画笔宽度和颜色
 			g.setStroke(new BasicStroke(8));
-			g.setColor(Color.GRAY);
+			g.setColor(Color.orange);
 			// 利用Graphics2D的draw方法画线
 			g.draw(lh);
 
@@ -504,37 +499,9 @@ public class BgClock extends JFrame {
 							* SEC_LENGTH);
 			g.setStroke(new BasicStroke(1));
 
-			g.setColor(Color.lightGray);
+			g.setColor(Color.orange);
 			g.draw(ls);
 
-			/** **** 画时钟背景，并将其透明处理 ******* */
-			// 所有使用bufferedImageGraphics画的图像，都画在bufferedImage上，
-			// drawImage方法的参数含义分别是：背景图片对象、目标位置第一个角的X、Y坐标、目标位置第二个角的X、Y坐标、
-			// 源位置第一个角的X、Y坐标、源位置第二个角的X、Y坐标、图像对象改变时的通知接受者
-			bufferedImageGraphics.drawImage(img[imageID], 0, 0, imageSize,
-					imageSize, 0, 0, imageSize + 10, imageSize + 10, this);
-			// 将背景图片透明化
-			for (int j = 0; j < imageSize; j++) {
-				for (int i = 0; i < imageSize; i++) {
-					// 获得背景图像中(i, j)坐标的颜色值
-					int pix = bufferedImage.getRGB(i, j);
-					Color c = new Color(pix);
-					int R = c.getRed();
-					int G = c.getGreen();
-					int B = c.getBlue();
-					// 通过Color对象的alpha，使颜色透明。
-					int newpix = new Color(R, G, B, alpha).getRGB();
-					// 重新设置背景图像该象素点的颜色
-					bufferedImage.setRGB(i, j, newpix);
-				}
-			}
-
-			/** 以上画背景操作都是画在bufferedImage上的，这里要将bufferedImage画在ClockLabel **/
-			// 将当前用户剪贴区 Clip 与椭圆区域相交，并将 Clip 设置为所得的交集
-			g.clip(new Ellipse2D.Double(95, 45, imageSize, imageSize));
-			g.setColor(Color.white);
-			// 在用户剪贴区画bufferedImage
-			g.drawImage(bufferedImage, 95, 45, this);
 		}
 
 		public void run() {
@@ -588,32 +555,7 @@ public class BgClock extends JFrame {
 							
 						}
 					}
-					// 实现背景透明度渐变
-					// 从浅入深，再由深入浅。
-					if (count % 2 == 0) {// 用于背景替换减速
-						if (flag) {
-							alpha += 1;
-							if (alpha == 100) {
-								flag = !flag;
-							}
-						} else {
-							alpha -= 1;
-							if (alpha == 0) {
-								flag = !flag;
-								// 当透明度变化一个轮回时，换一张背景图
-								imageID++;
-								if (imageID == 4) {
-									imageID = 0;
-								}
-							}
-						}
-						if (count >= 2147483647) { // 防溢出
-							count = 0;
-						}
-					}
-					// 重画时钟标签
 					repaint();
-
 					// 等待0.1秒钟
 					Thread.sleep(100);
 
