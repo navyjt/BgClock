@@ -324,7 +324,7 @@ public class BgClock extends JFrame {
 		double arcSec = 0;
 
 		// 背景图片
-		Image img1 = new ImageIcon("image\\9.jpg").getImage();
+		Image img1 = new ImageIcon("image\\1.jpg").getImage();
 		// 一个具有缓冲区的图像对象
 		BufferedImage bufferedImage = null;
 		int imageSize = 2 * Math.max(CIRCLE_X_RADIUS, CIRCLE_Y_RADIUS);
