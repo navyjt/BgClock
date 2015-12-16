@@ -69,11 +69,11 @@ public class BgClock extends JFrame {
 	
 	public BgClock() {
 
-		setTitle("时钟");
+		setTitle("计时器 By L.M.Z");
 		setSize(500, 530);
 		setLocation(((int) Toolkit.getDefaultToolkit().getScreenSize()
 				.getWidth() - 500) / 2, ((int) Toolkit.getDefaultToolkit()
-				.getScreenSize().getHeight() - 480) / 2);
+				.getScreenSize().getHeight() - 530) / 2);
 		init();
 		setResizable(false);
 		
@@ -202,9 +202,9 @@ public class BgClock extends JFrame {
 		remarkLabel.setForeground(Color.orange);
 
 		// 初始化星期标签
-		weekLabel.setSize(60, 20);
-		weekLabel.setLocation(315, 190);
-		weekLabel.setForeground(Color.BLUE);
+		weekLabel.setSize(80, 20);
+		weekLabel.setLocation(305, 190);
+		weekLabel.setForeground(Color.orange);
 		weekLabel.setFont(new Font("Arial Narrow", Font.BOLD, 12));
 		// 为星期标签赋值
 		int week = now.get(Calendar.DAY_OF_WEEK);
@@ -418,6 +418,13 @@ public class BgClock extends JFrame {
 				arcMin = 0;
 				arcSec = 0;
 			}
+			
+			if(clockisReversed)
+			{
+				arcHour = time * (360.0 / 12 / 60 / 60/ 10);
+				arcMin = time * (360.0 / 60 / 60 / 10);
+				arcSec = time * (360.0 / 60/ 10);
+			}
 				
 			//载入图片背景
 			bufferedImageGraphics.drawImage(img1, 0, 0, imageSize,
@@ -438,7 +445,7 @@ public class BgClock extends JFrame {
 							* HOUR_LENGTH);
 			// 设置画笔宽度和颜色
 			g.setStroke(new BasicStroke(8));
-			g.setColor(Color.orange);
+			g.setColor(Color.black);
 			// 利用Graphics2D的draw方法画线
 			g.draw(lh);
 
@@ -448,7 +455,7 @@ public class BgClock extends JFrame {
 					CIRCLE_Y + Math.sin((arcMin - 90) * Math.PI / 180)
 							* MIN_LENGTH);
 			g.setStroke(new BasicStroke(4));
-			g.setColor(Color.orange);
+			g.setColor(Color.black);
 			g.draw(lm);
 
 			// 画秒针
@@ -458,7 +465,7 @@ public class BgClock extends JFrame {
 							* SEC_LENGTH);
 			g.setStroke(new BasicStroke(1));
 
-			g.setColor(Color.orange);
+			g.setColor(Color.red);
 			g.draw(ls);
 
 		}
@@ -500,7 +507,6 @@ public class BgClock extends JFrame {
 							arcSec -= 360.0 / 60 / 10; // 每秒转6度
 							arcMin -= 360.0 / 60 / 60 / 10; // 每60秒转6度
 							arcHour -= 360.0 / 12 / 60 / 60 / 10; // 每3600秒转30度
-							//System.out.println("当前时间的角度为"+String.valueOf(arcSec));
 							// 当角度满一圈时，归0
 							if (arcSec <= -360) {
 								arcSec = 0;
